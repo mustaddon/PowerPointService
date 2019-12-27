@@ -10,13 +10,13 @@
     <AssemblyVersion>1.0.0</AssemblyVersion>
     <FileVersion>1.0.0</FileVersion>
     <Version>1.0.0</Version>
-    <Company></Company>
+    <Company>PowerPoint template model binding</Company>
     <Authors>Leonid Salavatov</Authors>
     <Copyright>Leonid Salavatov 2019</Copyright>
     <Product>RandomSolutions.PowerPointService</Product>
     <Title>RandomSolutions.PowerPointService</Title>
-    <Description></Description>
-    <PackageTags>powerpoint pptx merge template binding</PackageTags>
+    <Description>PowerPoint presentation from template and model</Description>
+    <PackageTags>powerpoint pptx template binding bind merge</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/mustaddon/PowerPointService</PackageProjectUrl>

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -17,9 +18,11 @@ namespace RandomSolutions
 
         public PowerPointService(IEnumerable<IPipeTransform> pipeTransforms = null)
         {
-            PipeTransforms = new Lazy<Dictionary<string, IPipeTransform>>(() =>
-                pipeTransforms?.GroupBy(x => x.Name?.Trim().ToLower()).ToDictionary(g => g.Key, g => g.First())
-                ?? new Dictionary<string, IPipeTransform>());
+            PipeTransforms = new Lazy<Dictionary<string, IPipeTransform>>(
+                () => (pipeTransforms ?? _defaultPipeTransforms())
+                    .GroupBy(x => x?.Name?.Trim().ToLower())
+                    .Where(g => !string.IsNullOrWhiteSpace(g.Key))
+                    .ToDictionary(g => g.Key, g => g.First()));
         }
 
         public virtual byte[] CreateFromTemplate(byte[] templatePresentation, Func<int, int, object> slideModelFactory)
@@ -225,7 +228,7 @@ namespace RandomSolutions
 
             for (var i = 1; i < parts.Length; i++)
             {
-                var pipe = parts[i].Trim().Split(new[] { ' ', ':' }).First().Trim().ToLower();
+                var pipe = parts[i].Trim().Split(':').First().Trim().ToLower();
 
                 if (PipeTransforms.Value.ContainsKey(pipe))
                 {
@@ -341,6 +344,22 @@ namespace RandomSolutions
             return type != null && type != typeof(string) && typeof(System.Collections.IEnumerable).IsAssignableFrom(type);
         }
 
+        static IEnumerable<IPipeTransform> _defaultPipeTransforms()
+        {
+            try
+            {
+                return typeof(IPipeTransform).Assembly.GetTypes()
+                    .Where(x => !x.IsAbstract
+                        && typeof(IPipeTransform).IsAssignableFrom(x)
+                        && x.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, new Type[0], null) != null)
+                    .Select(x => Activator.CreateInstance(x) as IPipeTransform);
+            }
+            catch { }
+
+            return new IPipeTransform[0];
+        }
+
         static string _cmdPattern = @"{{(.*?)}}";
+
     }
 }

@@ -45,11 +45,11 @@ namespace CoreConsoleApp
                     return Enumerable.Range(1, 3).Select(x => new
                     {
                         CompanyName = $"Company #{x}",
-                        Employees = Enumerable.Range(1, _rnd.Next(3, 12)).Select(xx => new
+                        Employees = Enumerable.Range(1, _rnd.Next(4, 12)).Select(xx => new
                         {
                             Name = $"Employee #{xx}",
                             Email = $"emp{xx}@company{x}.test",
-                            Birthday = new DateTime(_rnd.Next(1980, 2000), _rnd.Next(1, 12), _rnd.Next(1, 27)),
+                            Birthday = new DateTime(_rnd.Next(1980, 2000), _rnd.Next(1, 12), 1).AddDays(_rnd.Next(0, 30)),
                         }),
                     });
 
