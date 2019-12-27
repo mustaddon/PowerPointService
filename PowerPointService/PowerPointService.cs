@@ -13,13 +13,13 @@ namespace RandomSolutions
 {
     public class PowerPointService
     {
-        readonly Dictionary<string, IPipeTransform> _pipeTransforms;
+        readonly Lazy<Dictionary<string, IPipeTransform>> _pipes;
 
         public PowerPointService(IEnumerable<IPipeTransform> pipeTransforms = null)
         {
-            _pipeTransforms = pipeTransforms?.GroupBy(x => x.Name?.Trim().ToLower())
-                .ToDictionary(g => g.Key, g => g.First())
-                ?? new Dictionary<string, IPipeTransform>();
+            _pipes = new Lazy<Dictionary<string, IPipeTransform>>(() =>
+                pipeTransforms?.GroupBy(x => x.Name?.Trim().ToLower()).ToDictionary(g => g.Key, g => g.First())
+                ?? new Dictionary<string, IPipeTransform>());
         }
 
         public byte[] CreateFromTemplate(byte[] templatePresentation, Func<int, int, object> slideModelFactory)
@@ -81,7 +81,37 @@ namespace RandomSolutions
                 return targetStream.ToArray();
             }
         }
-        
+
+        public byte[] DeleteSlides(byte[] presentation, Func<int, int, bool> slideSelector)
+        {
+            using (var ms = new MemoryStream())
+            {
+                ms.Write(presentation, 0, presentation.Length);
+
+                using (var doc = PresentationDocument.Open(ms, true))
+                {
+                    var slist = doc.PresentationPart.Presentation.SlideIdList;
+                    var slideIds = slist.ChildElements.Cast<SlideId>().ToArray();
+
+                    for (var i = 0; i < slideIds.Length; i++)
+                    {
+                        if (!slideSelector(i, slideIds.Length))
+                            continue;
+
+                        var slideId = slideIds[i];
+                        var slide = (SlidePart)doc.PresentationPart.GetPartById(slideId.RelationshipId);
+
+                        slist.RemoveChild(slideId);
+                        _cleanCustomShow(doc.PresentationPart.Presentation.CustomShowList, slideId.RelationshipId);
+                        doc.PresentationPart.Presentation.Save();
+                        doc.PresentationPart.DeletePart(slide);
+                    }
+                }
+
+                return ms.ToArray();
+            }
+        }
+
 
         void _fillSlides(PresentationDocument doc, Func<int, int, object> modelFactory)
         {
@@ -192,10 +222,10 @@ namespace RandomSolutions
             {
                 var pipe = parts[i].Trim().Split(new[] { ' ', ':' }).First().Trim().ToLower();
 
-                if (_pipeTransforms.ContainsKey(pipe))
+                if (_pipes.Value.ContainsKey(pipe))
                 {
                     var args = Regex.Matches(parts[i], @"'([^']*?)'").Cast<Match>().Select(x => x.Groups[1].Value).ToArray();
-                    value = _pipeTransforms[pipe].Transform(value, args);
+                    value = _pipes.Value[pipe].Transform(value, args);
                 }
             }
 
