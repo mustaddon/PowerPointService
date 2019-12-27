@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{1525AE4C-8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreConsoleApp", "Test\CoreConsoleApp\CoreConsoleApp.csproj", "{C9456FE6-4090-4B62-9569-2C2BDB2F352B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetConsoleApp", "Test\NetConsoleApp\NetConsoleApp.csproj", "{70B1F446-5280-4387-92CA-273D4F814CA9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,12 +25,17 @@ Global
 		{C9456FE6-4090-4B62-9569-2C2BDB2F352B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9456FE6-4090-4B62-9569-2C2BDB2F352B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9456FE6-4090-4B62-9569-2C2BDB2F352B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70B1F446-5280-4387-92CA-273D4F814CA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70B1F446-5280-4387-92CA-273D4F814CA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70B1F446-5280-4387-92CA-273D4F814CA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70B1F446-5280-4387-92CA-273D4F814CA9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C9456FE6-4090-4B62-9569-2C2BDB2F352B} = {1525AE4C-8B82-4174-8454-20C540B3F494}
+		{70B1F446-5280-4387-92CA-273D4F814CA9} = {1525AE4C-8B82-4174-8454-20C540B3F494}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {53D1C04D-753B-4DD1-ABB5-65D02D6EC951}

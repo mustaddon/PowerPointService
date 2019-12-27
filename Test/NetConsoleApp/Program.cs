@@ -1,10 +1,13 @@
-﻿using System;
+﻿using RandomSolutions;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using RandomSolutions;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace CoreConsoleApp
+namespace NetConsoleApp
 {
     class Program
     {
@@ -18,7 +21,7 @@ namespace CoreConsoleApp
             _testCreateFromTemplate();
         }
 
-        static string _presentationsDir(string file) => Path.Combine(@"..\..\..\..\presentations\", file);
+        static string _presentationsDir(string file) => Path.Combine(@"..\..\..\presentations\", file);
 
         static void _testInsertSlides()
         {
@@ -57,8 +60,9 @@ namespace CoreConsoleApp
                 {
                     Title = "Template test",
                     Created = DateTimeOffset.Now,
-                    User = new { 
-                        Name = "TestName", 
+                    User = new
+                    {
+                        Name = "TestName",
                         IsActive = true,
                         Evaluation = 1000000,
                     },
