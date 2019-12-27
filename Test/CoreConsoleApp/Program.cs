@@ -8,38 +8,66 @@ namespace CoreConsoleApp
 {
     class Program
     {
+        static PowerPointService _powerPointService = IoC.Container.GetInstance<PowerPointService>();
+
         static void Main(string[] args)
         {
-            var modelFac = new Func<int, int, object>((x, len) =>
+            _testInsertSlides();
+            _testDeleteSlides();
+            _testCreateFromTemplate();
+        }
+
+        static void _testInsertSlides()
+        {
+            var target = File.ReadAllBytes(_presentationsDir("insert_target.pptx"));
+            var source = File.ReadAllBytes(_presentationsDir("insert_source.pptx"));
+            var result = _powerPointService.InsertSlides(target, 1, source, (i, len) => i > 0);
+            File.WriteAllBytes(_presentationsDir("insert_result.pptx"), result);
+        }
+
+        static void _testDeleteSlides()
+        {
+            var source = File.ReadAllBytes(_presentationsDir("delete_source.pptx"));
+            var result = _powerPointService.DeleteSlides(source, (i, len) => i > 0);
+            File.WriteAllBytes(_presentationsDir("delete_result.pptx"), result);
+        }
+
+        static void _testCreateFromTemplate()
+        {
+            var template = File.ReadAllBytes(_presentationsDir("template_source.pptx"));
+
+            var result = _powerPointService.CreateFromTemplate(template, (i, len) =>
             {
-                var model = new
-                {
-                    Request = new
+                if (i == len - 1)
+                    return Enumerable.Range(1, 3).Select(x => new
                     {
-                        Title = "TEST",
-                        Items = Enumerable.Range(0, 2).Select(i => new { Name = $"name:{i}", Date = DateTimeOffset.Now.AddDays(i) }).ToArray()
+                        CompanyName = $"Company #{x}",
+                        Employees = Enumerable.Range(1, _random.Next(3, 12)).Select(xx => new
+                        {
+                            Name = $"Employee #{xx}",
+                            Email = $"emp{xx}@company{x}.test",
+                            Birthday = new DateTime(_random.Next(1980, 2000), _random.Next(1, 12), _random.Next(1, 27)),
+                        }),
+                    });
+
+                return new
+                {
+                    Title = "Template test",
+                    Created = DateTimeOffset.Now,
+                    User = new { 
+                        Name = "TestName", 
+                        IsActive = true,
+                        Evaluation = 1000000,
                     },
-                    test = $"TEXT:{x}",
-                    html = "<html><!-- comment --><div>text <i>iii</i></div><ul><li>111</li><li>222</li></ul><a href=\"http://aaa.aaa\">aaa <b>bbb</b></a><html>",
-                    b = Enumerable.Range(1, 3).Select(xx=> new { Title = $"user#{xx}" }),
-                    c = new[] { "aaa", "bbb" },
-                    d = DateTimeOffset.Now,
-                    e = new[] { DateTimeOffset.Now, DateTimeOffset.Now.AddDays(1) },
-                    num = "0.12345",
-                    nums = new object[] { null, 12345.67890, 12345.67890f, 12345.67890m, 1234567890, 1234567890L },
-                    rows = Enumerable.Range(0, 5).Select(i => new { col1 = $"col1:{i}", col2 = $"col2:{i}", col3 = $"col3:{i}" }),
-                    bool_ = true,
-                    bools = new bool?[] { true, false, null },
+                    Items = Enumerable.Range(1, 5).Select(x => $"item#{x}"),
                 };
-                //return model;
-                return x == 0 ? new[] { model, model } : new object[] { model, model, model } as object;
             });
 
-            var powerPointService = IoC.Container.GetInstance<PowerPointService>();
-            var data = powerPointService.CreateFromTemplate(File.ReadAllBytes(@"..\tmp.pptx"), modelFac);
-            File.WriteAllBytes(@"..\test.pptx", data);
-
-            Console.WriteLine("Hello World!");
+            File.WriteAllBytes(_presentationsDir("template_result.pptx"), result);
         }
+
+        static string _presentationsDir(string file) => Path.Combine(@"..\..\..\..\presentations\", file);
+
+        static Random _random = new Random();
     }
 }

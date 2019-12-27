@@ -13,16 +13,16 @@ namespace RandomSolutions
 {
     public class PowerPointService
     {
-        readonly Lazy<Dictionary<string, IPipeTransform>> _pipes;
+        protected readonly Lazy<Dictionary<string, IPipeTransform>> PipeTransforms;
 
         public PowerPointService(IEnumerable<IPipeTransform> pipeTransforms = null)
         {
-            _pipes = new Lazy<Dictionary<string, IPipeTransform>>(() =>
+            PipeTransforms = new Lazy<Dictionary<string, IPipeTransform>>(() =>
                 pipeTransforms?.GroupBy(x => x.Name?.Trim().ToLower()).ToDictionary(g => g.Key, g => g.First())
                 ?? new Dictionary<string, IPipeTransform>());
         }
 
-        public byte[] CreateFromTemplate(byte[] templatePresentation, Func<int, int, object> slideModelFactory)
+        public virtual byte[] CreateFromTemplate(byte[] templatePresentation, Func<int, int, object> slideModelFactory)
         {
             using (var ms = new MemoryStream())
             {
@@ -35,7 +35,12 @@ namespace RandomSolutions
             }
         }
 
-        public byte[] InsertSlides(byte[] targetPresentation, int targetInsertIndex, byte[] sourcePresentation, Func<int, int, bool> sourceSlideSelector = null)
+        public virtual byte[] InsertSlides(byte[] targetPresentation, byte[] sourcePresentation, Func<int, int, bool> sourceSlideSelector = null)
+        {
+            return InsertSlides(targetPresentation, int.MaxValue, sourcePresentation, sourceSlideSelector);
+        }
+
+        public virtual byte[] InsertSlides(byte[] targetPresentation, int targetInsertIndex, byte[] sourcePresentation, Func<int, int, bool> sourceSlideSelector = null)
         {
             using (var targetStream = new MemoryStream())
             using (var sourceStream = new MemoryStream())
@@ -82,7 +87,7 @@ namespace RandomSolutions
             }
         }
 
-        public byte[] DeleteSlides(byte[] presentation, Func<int, int, bool> slideSelector)
+        public virtual byte[] DeleteSlides(byte[] presentation, Func<int, int, bool> slideSelector)
         {
             using (var ms = new MemoryStream())
             {
@@ -222,10 +227,10 @@ namespace RandomSolutions
             {
                 var pipe = parts[i].Trim().Split(new[] { ' ', ':' }).First().Trim().ToLower();
 
-                if (_pipes.Value.ContainsKey(pipe))
+                if (PipeTransforms.Value.ContainsKey(pipe))
                 {
                     var args = Regex.Matches(parts[i], @"'([^']*?)'").Cast<Match>().Select(x => x.Groups[1].Value).ToArray();
-                    value = _pipes.Value[pipe].Transform(value, args);
+                    value = PipeTransforms.Value[pipe].Transform(value, args);
                 }
             }
 
@@ -336,6 +341,6 @@ namespace RandomSolutions
             return type != null && type != typeof(string) && typeof(System.Collections.IEnumerable).IsAssignableFrom(type);
         }
 
-        static string _cmdPattern = @"{{([^{}]+)}}";
+        static string _cmdPattern = @"{{(.*?)}}";
     }
 }
