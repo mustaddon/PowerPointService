@@ -21,7 +21,7 @@ var result = _powerPointService.CreateFromTemplate(template, (i, len) => new {
 
 ![](/Test/Images/example01.png)
 
-*Slide/row iterations*
+*Iterator for slides/rows*
 ```C#
 var result = _powerPointService.CreateFromTemplate(template, (i, len) => 
   Enumerable.Range(1, 3).Select(x => new {
