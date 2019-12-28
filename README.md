@@ -6,7 +6,7 @@ PowerPoint presentation from template and model
 ```C#
 var powerPointService = new RandomSolutions.PowerPointService();
 var template = File.ReadAllBytes(@".\template.pptx");
-var result = _powerPointService.CreateFromTemplate(template, (i, len) => new {
+var result = powerPointService.CreateFromTemplate(template, (i, len) => new {
   Title = "Example",
   Created = DateTimeOffset.Now,
   User = new { 
@@ -23,7 +23,7 @@ var result = _powerPointService.CreateFromTemplate(template, (i, len) => new {
 ### Example #2 - Iterator for slides/rows
 
 ```C#
-var result = _powerPointService.CreateFromTemplate(template, (i, len) => 
+var result = powerPointService.CreateFromTemplate(template, (i, len) => 
   Enumerable.Range(1, 3).Select(x => new {
     CompanyName = $"Company #{x}",
     Employees = Enumerable.Range(1, _rnd.Next(4, 12)).Select(xx => new {
