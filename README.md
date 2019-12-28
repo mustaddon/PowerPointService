@@ -1,9 +1,8 @@
 # PowerPointService [![NuGet version](https://badge.fury.io/nu/RandomSolutions.PowerPointService.svg)](http://badge.fury.io/nu/RandomSolutions.PowerPointService)
 PowerPoint presentation from template and model
 
-## Example
+### Example #1 - Create from template
 
-*Create from template*
 ```C#
 var powerPointService = new RandomSolutions.PowerPointService();
 var template = File.ReadAllBytes(@".\template.pptx");
@@ -21,7 +20,8 @@ var result = _powerPointService.CreateFromTemplate(template, (i, len) => new {
 
 ![](/Test/Images/example01.png)
 
-*Iterator for slides/rows*
+### Example #2 - Iterator for slides/rows
+
 ```C#
 var result = _powerPointService.CreateFromTemplate(template, (i, len) => 
   Enumerable.Range(1, 3).Select(x => new {
