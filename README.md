@@ -16,6 +16,10 @@ var result = _powerPointService.CreateFromTemplate(template, (i, len) => new {
 ![](/Test/Images/example01.png)
 
 
+![](/Test/Images/example02.png)
+
+
+
 [More examples in the test console application...](Test/CoreConsoleApp/Program.cs)
 
 [Presentation sources...](Test/Presentations/)
