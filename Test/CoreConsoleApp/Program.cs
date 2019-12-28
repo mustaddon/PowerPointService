@@ -55,14 +55,14 @@ namespace CoreConsoleApp
 
                 return new
                 {
-                    Title = "Template test",
+                    Title = "Example",
                     Created = DateTimeOffset.Now,
                     User = new { 
                         Name = "TestName", 
                         IsActive = true,
                         Evaluation = 1000000,
                     },
-                    Items = Enumerable.Range(1, 5).Select(x => new { Name = $"item#{x}" }),
+                    Items = Enumerable.Range(1, 5).Select(x => $"item#{x}"),
                 };
             });
 
