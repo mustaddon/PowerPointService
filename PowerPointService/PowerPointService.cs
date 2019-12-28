@@ -14,15 +14,14 @@ namespace RandomSolutions
 {
     public class PowerPointService
     {
-        protected readonly Lazy<Dictionary<string, IPipeTransform>> PipeTransforms;
+        protected readonly Lazy<Dictionary<string, IPipeTransform>> Pipes;
 
-        public PowerPointService(IEnumerable<IPipeTransform> pipeTransforms = null)
+        public PowerPointService(IEnumerable<IPipeTransform> pipes = null)
         {
-            PipeTransforms = new Lazy<Dictionary<string, IPipeTransform>>(
-                () => (pipeTransforms ?? _defaultPipeTransforms())
-                    .GroupBy(x => x?.Name?.Trim().ToLower())
-                    .Where(g => !string.IsNullOrWhiteSpace(g.Key))
-                    .ToDictionary(g => g.Key, g => g.First()));
+            Pipes = new Lazy<Dictionary<string, IPipeTransform>>(() => (pipes ?? _defaultPipes())
+                .GroupBy(x => x?.Name?.Trim().ToLower())
+                .Where(g => !string.IsNullOrWhiteSpace(g.Key))
+                .ToDictionary(g => g.Key, g => g.First()));
         }
 
         public virtual byte[] CreateFromTemplate(byte[] templatePresentation, Func<int, int, object> slideModelFactory)
@@ -230,10 +229,10 @@ namespace RandomSolutions
             {
                 var pipe = parts[i].Trim().Split(':').First().Trim().ToLower();
 
-                if (PipeTransforms.Value.ContainsKey(pipe))
+                if (Pipes.Value.ContainsKey(pipe))
                 {
                     var args = Regex.Matches(parts[i], @"'([^']*?)'").Cast<Match>().Select(x => x.Groups[1].Value).ToArray();
-                    value = PipeTransforms.Value[pipe].Transform(value, args);
+                    value = Pipes.Value[pipe].Transform(value, args);
                 }
             }
 
@@ -344,7 +343,7 @@ namespace RandomSolutions
             return type != null && type != typeof(string) && typeof(System.Collections.IEnumerable).IsAssignableFrom(type);
         }
 
-        static IEnumerable<IPipeTransform> _defaultPipeTransforms()
+        static IEnumerable<IPipeTransform> _defaultPipes()
         {
             try
             {

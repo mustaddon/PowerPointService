@@ -32,8 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="RandomSolutions.PipeTransform, Version=1.0.1.0, Culture=neutral, PublicKeyToken=fd78eaf05c8d766a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\RandomSolutions.PipeTransform.1.0.1\lib\net45\RandomSolutions.PipeTransform.dll</HintPath>
+    <Reference Include="RandomSolutions.PipeTransform, Version=1.0.2.0, Culture=neutral, PublicKeyToken=fd78eaf05c8d766a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\RandomSolutions.PipeTransform.1.0.2\lib\net45\RandomSolutions.PipeTransform.dll</HintPath>
     </Reference>
     <Reference Include="SimpleInjector, Version=4.8.1.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SimpleInjector.4.8.1\lib\net45\SimpleInjector.dll</HintPath>
