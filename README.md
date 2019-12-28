@@ -38,8 +38,9 @@ var result = _powerPointService.CreateFromTemplate(template, (i, len) =>
 ![](/Test/Images/example02.png)
 
 
-[template.pptx](Test/Presentations/template_source.pptx)
-[result.pptx](Test/Presentations/template_result.pptx)
+[template.pptx](Test/Presentations/template_source.pptx?raw=true)
+
+[result.pptx](Test/Presentations/template_result.pptx?raw=true)
 
 [More examples in the test console application...](Test/CoreConsoleApp/Program.cs)
 
