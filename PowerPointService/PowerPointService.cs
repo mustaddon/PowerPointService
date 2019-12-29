@@ -37,12 +37,7 @@ namespace RandomSolutions
             }
         }
 
-        public virtual byte[] InsertSlides(byte[] targetPresentation, byte[] sourcePresentation, Func<int, int, bool> sourceSlideSelector = null)
-        {
-            return InsertSlides(targetPresentation, int.MaxValue, sourcePresentation, sourceSlideSelector);
-        }
-
-        public virtual byte[] InsertSlides(byte[] targetPresentation, int targetInsertIndex, byte[] sourcePresentation, Func<int, int, bool> sourceSlideSelector = null)
+        public virtual byte[] InsertSlides(byte[] sourcePresentation, byte[] targetPresentation, int targetInsertIndex = -1, Func<int, int, bool> sourceSlideSelector = null)
         {
             using (var targetStream = new MemoryStream())
             using (var sourceStream = new MemoryStream())
@@ -58,7 +53,7 @@ namespace RandomSolutions
 
                     var slideMasterPartsMap = _cloneSlideMasterParts(source, target);
                     var targetSlidesCount = target.PresentationPart.Presentation.SlideIdList.Count();
-                    var index = targetInsertIndex < 0 ? Math.Max(0, targetSlidesCount + targetInsertIndex) : Math.Min(targetSlidesCount, targetInsertIndex);
+                    var index = targetInsertIndex < 0 ? Math.Max(0, targetSlidesCount + targetInsertIndex + 1) : Math.Min(targetSlidesCount, targetInsertIndex);
                     var nextId = _getMaxSlideId(target.PresentationPart.Presentation.SlideIdList) + 1;
                     var sourceSlideIds = source.PresentationPart.Presentation.SlideIdList.Elements<SlideId>().ToArray();
 

@@ -24,7 +24,7 @@ namespace CoreConsoleApp
         {
             var target = File.ReadAllBytes(_presentationsDir("insert_target.pptx"));
             var source = File.ReadAllBytes(_presentationsDir("insert_source.pptx"));
-            var result = _powerPointService.InsertSlides(target, 1, source, (i, len) => i > 0);
+            var result = _powerPointService.InsertSlides(source, target, 1, (i, len) => i > 0);
             File.WriteAllBytes(_presentationsDir("insert_result.pptx"), result);
         }
 
