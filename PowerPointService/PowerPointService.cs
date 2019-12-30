@@ -84,7 +84,7 @@ namespace RandomSolutions
         }
 
 
-        void _insertSlides(PresentationDocument source, PresentationDocument target, int targetInsertIndex = -1, Func<int, int, bool> sourceSlideSelector = null)
+        void _insertSlides(PresentationDocument source, PresentationDocument target, int targetInsertIndex, Func<int, int, bool> sourceSlideSelector)
         {
             if (target.PresentationPart.Presentation.SlideIdList == null)
                 target.PresentationPart.Presentation.SlideIdList = new SlideIdList();
