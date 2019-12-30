@@ -47,38 +47,7 @@ namespace RandomSolutions
 
                 using (var target = PresentationDocument.Open(targetStream, true))
                 using (var source = PresentationDocument.Open(sourceStream, true))
-                {
-                    if (target.PresentationPart.Presentation.SlideIdList == null)
-                        target.PresentationPart.Presentation.SlideIdList = new SlideIdList();
-
-                    var slideMasterPartsMap = _cloneSlideMasterParts(source, target);
-                    var targetSlidesCount = target.PresentationPart.Presentation.SlideIdList.Count();
-                    var index = targetInsertIndex < 0 ? Math.Max(0, targetSlidesCount + targetInsertIndex + 1) : Math.Min(targetSlidesCount, targetInsertIndex);
-                    var nextId = _getMaxSlideId(target.PresentationPart.Presentation.SlideIdList) + 1;
-                    var sourceSlideIds = source.PresentationPart.Presentation.SlideIdList.Elements<SlideId>().ToArray();
-
-                    for (var i = 0; i < sourceSlideIds.Length; i++)
-                    {
-                        if (sourceSlideSelector?.Invoke(i, sourceSlideIds.Length) == false)
-                            continue;
-
-                        var sourceSlideId = sourceSlideIds[i];
-                        var sourceSlidePart = (SlidePart)source.PresentationPart.GetPartById(sourceSlideId.RelationshipId);
-                        var sourceSlideLayoutPartId = sourceSlidePart.SlideLayoutPart.SlideMasterPart.GetIdOfPart(sourceSlidePart.SlideLayoutPart);
-                        var targetSlideMasterPart = slideMasterPartsMap[sourceSlidePart.SlideLayoutPart.SlideMasterPart];
-                        var targetSlideLayoutPart = (SlideLayoutPart)targetSlideMasterPart.GetPartById(sourceSlideLayoutPartId);//.SlideLayoutParts.First(x => x.SlideLayoutParts).FirstOrDefault(x => x.SlideLayout.CommonSlideData.Name.Value.IndexOf(sourceSlidePart.SlideLayoutPart.SlideLayout.CommonSlideData.Name, StringComparison.InvariantCultureIgnoreCase) >= 0)
-                        var targetSlidePart = target.PresentationPart.AddPart(sourceSlidePart);
-
-                        targetSlidePart.DeleteParts(targetSlidePart.Parts.Select(x => x.OpenXmlPart)
-                            .Where(x => x == targetSlidePart.SlideLayoutPart
-                                || x.GetType() == typeof(NotesSlidePart)));
-
-                        targetSlidePart.AddPart(targetSlideLayoutPart);
-                        var targetSlideId = target.PresentationPart.Presentation.SlideIdList.InsertAt(
-                            new SlideId() { Id = nextId++, RelationshipId = target.PresentationPart.GetIdOfPart(targetSlidePart) },
-                            index++);
-                    }
-                }
+                    _insertSlides(source, target, targetInsertIndex, sourceSlideSelector);
 
                 return targetStream.ToArray();
             }
@@ -114,6 +83,40 @@ namespace RandomSolutions
             }
         }
 
+
+        void _insertSlides(PresentationDocument source, PresentationDocument target, int targetInsertIndex = -1, Func<int, int, bool> sourceSlideSelector = null)
+        {
+            if (target.PresentationPart.Presentation.SlideIdList == null)
+                target.PresentationPart.Presentation.SlideIdList = new SlideIdList();
+
+            var slideMasterPartsMap = _cloneSlideMasterParts(source, target);
+            var targetSlidesCount = target.PresentationPart.Presentation.SlideIdList.Count();
+            var index = targetInsertIndex < 0 ? Math.Max(0, targetSlidesCount + targetInsertIndex + 1) : Math.Min(targetSlidesCount, targetInsertIndex);
+            var nextId = _getMaxSlideId(target.PresentationPart.Presentation.SlideIdList) + 1;
+            var sourceSlideIds = source.PresentationPart.Presentation.SlideIdList.Elements<SlideId>().ToArray();
+
+            for (var i = 0; i < sourceSlideIds.Length; i++)
+            {
+                if (sourceSlideSelector?.Invoke(i, sourceSlideIds.Length) == false)
+                    continue;
+
+                var sourceSlideId = sourceSlideIds[i];
+                var sourceSlidePart = (SlidePart)source.PresentationPart.GetPartById(sourceSlideId.RelationshipId);
+                var sourceSlideLayoutPartId = sourceSlidePart.SlideLayoutPart.SlideMasterPart.GetIdOfPart(sourceSlidePart.SlideLayoutPart);
+                var targetSlideMasterPart = slideMasterPartsMap[sourceSlidePart.SlideLayoutPart.SlideMasterPart];
+                var targetSlideLayoutPart = (SlideLayoutPart)targetSlideMasterPart.GetPartById(sourceSlideLayoutPartId);//.SlideLayoutParts.First(x => x.SlideLayoutParts).FirstOrDefault(x => x.SlideLayout.CommonSlideData.Name.Value.IndexOf(sourceSlidePart.SlideLayoutPart.SlideLayout.CommonSlideData.Name, StringComparison.InvariantCultureIgnoreCase) >= 0)
+                var targetSlidePart = target.PresentationPart.AddPart(sourceSlidePart);
+
+                targetSlidePart.DeleteParts(targetSlidePart.Parts.Select(x => x.OpenXmlPart)
+                    .Where(x => x == targetSlidePart.SlideLayoutPart
+                        || x.GetType() == typeof(NotesSlidePart)));
+
+                targetSlidePart.AddPart(targetSlideLayoutPart);
+                var targetSlideId = target.PresentationPart.Presentation.SlideIdList.InsertAt(
+                    new SlideId() { Id = nextId++, RelationshipId = target.PresentationPart.GetIdOfPart(targetSlidePart) },
+                    index++);
+            }
+        }
 
         void _fillSlides(PresentationDocument doc, Func<int, int, object> modelFactory)
         {
