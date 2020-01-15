@@ -17,12 +17,21 @@ namespace NetConsoleApp
 
         static void Main(string[] args)
         {
+            _testMergeSlides();
             _testInsertSlides();
             _testDeleteSlides();
             _testCreateFromTemplate();
         }
 
         static string _presentationsDir(string file) => Path.Combine(@"..\..\..\presentations\", file);
+
+        static void _testMergeSlides()
+        {
+            var target = File.ReadAllBytes(_presentationsDir("merge_target.pptx"));
+            var source = File.ReadAllBytes(_presentationsDir("merge_source.pptx"));
+            var result = _powerPointService.MergeSlides(source, target, (i, slen, tlen) => i == 0 ? 1 : -1);
+            File.WriteAllBytes(_presentationsDir("merge_result.pptx"), result);
+        }
 
         static void _testInsertSlides()
         {
