@@ -7,16 +7,16 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
 
-    <AssemblyVersion>1.0.1</AssemblyVersion>
-    <FileVersion>1.0.1</FileVersion>
-    <Version>1.0.1</Version>
+    <AssemblyVersion>1.0.2</AssemblyVersion>
+    <FileVersion>1.0.2</FileVersion>
+    <Version>1.0.2</Version>
     <Company>PowerPoint template model binding</Company>
     <Authors>Leonid Salavatov</Authors>
-    <Copyright>Leonid Salavatov 2019</Copyright>
+    <Copyright>Leonid Salavatov 2020</Copyright>
     <Product>RandomSolutions.PowerPointService</Product>
     <Title>RandomSolutions.PowerPointService</Title>
     <Description>PowerPoint presentation from template and model</Description>
-    <PackageTags>powerpoint pptx template model slide binding bind merge</PackageTags>
+    <PackageTags>powerpoint pptx template model slide binding bind merge c# csharp</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/mustaddon/PowerPointService</PackageProjectUrl>
@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.9.1" />
-    <PackageReference Include="RandomSolutions.PipeTransform" Version="1.0.2" />
+    <PackageReference Include="RandomSolutions.PipeTransform" Version="1.0.3" />
   </ItemGroup>
 
 </Project>

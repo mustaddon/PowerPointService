@@ -53,6 +53,22 @@ namespace RandomSolutions
             }
         }
 
+        public virtual byte[] MergeSlides(byte[] sourcePresentation, byte[] targetPresentation, Func<int, int, int, int?> map)
+        {
+            using (var targetStream = new MemoryStream())
+            using (var sourceStream = new MemoryStream())
+            {
+                targetStream.Write(targetPresentation, 0, targetPresentation.Length);
+                sourceStream.Write(sourcePresentation, 0, sourcePresentation.Length);
+
+                using (var target = PresentationDocument.Open(targetStream, true))
+                using (var source = PresentationDocument.Open(sourceStream, true))
+                    _mergeSlides(source, target, map);
+
+                return targetStream.ToArray();
+            }
+        }
+
         public virtual byte[] DeleteSlides(byte[] presentation, Func<int, int, bool> slideSelector)
         {
             using (var ms = new MemoryStream())
@@ -84,38 +100,57 @@ namespace RandomSolutions
         }
 
 
-        void _insertSlides(PresentationDocument source, PresentationDocument target, int targetInsertIndex, Func<int, int, bool> sourceSlideSelector)
+        static void _mergeSlides(PresentationDocument source, PresentationDocument target, Func<int, int, int, int?> map)
+        {
+            if (target.PresentationPart.Presentation.SlideIdList == null)
+                target.PresentationPart.Presentation.SlideIdList = new SlideIdList();
+
+            var slideMasterPartsMap = _cloneSlideMasterParts(source, target);
+            var nextId = _getMaxSlideId(target.PresentationPart.Presentation.SlideIdList) + 1;
+            var sourceSlideIds = source.PresentationPart.Presentation.SlideIdList.Elements<SlideId>().ToArray();
+
+            for (var i = 0; i < sourceSlideIds.Length; i++)
+            {
+                var targetSlidesCount = target.PresentationPart.Presentation.SlideIdList.Count();
+                var insertAt = map(i, sourceSlideIds.Length, targetSlidesCount);
+
+                if (insertAt.HasValue)
+                    _insertSlidePart(source, sourceSlideIds[i], target, slideMasterPartsMap, _getIndex(insertAt.Value, targetSlidesCount), nextId++);
+            }
+        }
+
+        static void _insertSlides(PresentationDocument source, PresentationDocument target, int targetInsertIndex, Func<int, int, bool> sourceSlideSelector)
         {
             if (target.PresentationPart.Presentation.SlideIdList == null)
                 target.PresentationPart.Presentation.SlideIdList = new SlideIdList();
 
             var slideMasterPartsMap = _cloneSlideMasterParts(source, target);
             var targetSlidesCount = target.PresentationPart.Presentation.SlideIdList.Count();
-            var index = targetInsertIndex < 0 ? Math.Max(0, targetSlidesCount + targetInsertIndex + 1) : Math.Min(targetSlidesCount, targetInsertIndex);
+            var index = _getIndex(targetInsertIndex, targetSlidesCount);
             var nextId = _getMaxSlideId(target.PresentationPart.Presentation.SlideIdList) + 1;
             var sourceSlideIds = source.PresentationPart.Presentation.SlideIdList.Elements<SlideId>().ToArray();
 
             for (var i = 0; i < sourceSlideIds.Length; i++)
-            {
-                if (sourceSlideSelector?.Invoke(i, sourceSlideIds.Length) == false)
-                    continue;
+                if (sourceSlideSelector?.Invoke(i, sourceSlideIds.Length) != false)
+                    _insertSlidePart(source, sourceSlideIds[i], target, slideMasterPartsMap, index++, nextId++);
+        }
 
-                var sourceSlideId = sourceSlideIds[i];
-                var sourceSlidePart = (SlidePart)source.PresentationPart.GetPartById(sourceSlideId.RelationshipId);
-                var sourceSlideLayoutPartId = sourceSlidePart.SlideLayoutPart.SlideMasterPart.GetIdOfPart(sourceSlidePart.SlideLayoutPart);
-                var targetSlideMasterPart = slideMasterPartsMap[sourceSlidePart.SlideLayoutPart.SlideMasterPart];
-                var targetSlideLayoutPart = (SlideLayoutPart)targetSlideMasterPart.GetPartById(sourceSlideLayoutPartId);//.SlideLayoutParts.First(x => x.SlideLayoutParts).FirstOrDefault(x => x.SlideLayout.CommonSlideData.Name.Value.IndexOf(sourceSlidePart.SlideLayoutPart.SlideLayout.CommonSlideData.Name, StringComparison.InvariantCultureIgnoreCase) >= 0)
-                var targetSlidePart = target.PresentationPart.AddPart(sourceSlidePart);
+        static void _insertSlidePart(PresentationDocument source, SlideId sourceSlideId, PresentationDocument target, Dictionary<SlideMasterPart, SlideMasterPart> slideMasterPartsMap, int targetIndex, uint targetSlideId)
+        {
+            var sourceSlidePart = (SlidePart)source.PresentationPart.GetPartById(sourceSlideId.RelationshipId);
+            var sourceSlideLayoutPartId = sourceSlidePart.SlideLayoutPart.SlideMasterPart.GetIdOfPart(sourceSlidePart.SlideLayoutPart);
+            var targetSlideMasterPart = slideMasterPartsMap[sourceSlidePart.SlideLayoutPart.SlideMasterPart];
+            var targetSlideLayoutPart = (SlideLayoutPart)targetSlideMasterPart.GetPartById(sourceSlideLayoutPartId);//.SlideLayoutParts.First(x => x.SlideLayoutParts).FirstOrDefault(x => x.SlideLayout.CommonSlideData.Name.Value.IndexOf(sourceSlidePart.SlideLayoutPart.SlideLayout.CommonSlideData.Name, StringComparison.InvariantCultureIgnoreCase) >= 0)
+            var targetSlidePart = target.PresentationPart.AddPart(sourceSlidePart);
 
-                targetSlidePart.DeleteParts(targetSlidePart.Parts.Select(x => x.OpenXmlPart)
-                    .Where(x => x == targetSlidePart.SlideLayoutPart
-                        || x.GetType() == typeof(NotesSlidePart)));
+            targetSlidePart.DeleteParts(targetSlidePart.Parts.Select(x => x.OpenXmlPart)
+                .Where(x => x == targetSlidePart.SlideLayoutPart
+                    || x.GetType() == typeof(NotesSlidePart)));
 
-                targetSlidePart.AddPart(targetSlideLayoutPart);
-                var targetSlideId = target.PresentationPart.Presentation.SlideIdList.InsertAt(
-                    new SlideId() { Id = nextId++, RelationshipId = target.PresentationPart.GetIdOfPart(targetSlidePart) },
-                    index++);
-            }
+            targetSlidePart.AddPart(targetSlideLayoutPart);
+            target.PresentationPart.Presentation.SlideIdList.InsertAt(
+                new SlideId() { Id = targetSlideId, RelationshipId = target.PresentationPart.GetIdOfPart(targetSlidePart) },
+                targetIndex);
         }
 
         void _fillSlides(PresentationDocument doc, Func<int, int, object> modelFactory)
@@ -193,7 +228,7 @@ namespace RandomSolutions
             });
         }
 
-        string _getRowSourcePath(object obj, string cmd)
+        static string _getRowSourcePath(object obj, string cmd)
         {
             var propNames = _removeTags(cmd).Split('|').First().Trim().Split('.');
             var type = obj.GetType();
@@ -334,6 +369,11 @@ namespace RandomSolutions
             // Slide master identifiers have a minimum value of greater than
             // or equal to 2147483648. 
             return Math.Max(2147483648, slideMasterIdList?.Elements<SlideMasterId>().Max(x => x.Id) ?? 0);
+        }
+
+        static int _getIndex(int insertAt, int count)
+        {
+            return insertAt < 0 ? Math.Max(0, count + insertAt + 1) : Math.Min(count, insertAt);
         }
 
         static bool _isArray(Type type)
