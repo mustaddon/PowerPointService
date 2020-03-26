@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using RandomSolutions;
 
-namespace CoreConsoleApp
+namespace ConsoleApp
 {
     class Program
     {
@@ -25,7 +25,7 @@ namespace CoreConsoleApp
         {
             var target = File.ReadAllBytes(_presentationsDir("merge_target.pptx"));
             var source = File.ReadAllBytes(_presentationsDir("merge_source.pptx"));
-            var result = _powerPointService.MergeSlides(source, target, (i, slen, tlen) => i==0 ? 1 : -1);
+            var result = _powerPointService.MergeSlides(source, target, (i, slen, tlen) => i == 0 ? 1 : -1);
             File.WriteAllBytes(_presentationsDir("merge_result.pptx"), result);
         }
 
@@ -66,8 +66,9 @@ namespace CoreConsoleApp
                 {
                     Title = "Example",
                     Created = DateTimeOffset.Now,
-                    User = new { 
-                        Name = "TestName", 
+                    User = new
+                    {
+                        Name = "TestName",
                         IsActive = true,
                         Evaluation = 1000000,
                     },

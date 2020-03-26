@@ -5,7 +5,7 @@ using System.Text;
 using RandomSolutions;
 using System.Linq;
 
-namespace NetConsoleApp
+namespace ConsoleApp
 {
     class IoC
     {

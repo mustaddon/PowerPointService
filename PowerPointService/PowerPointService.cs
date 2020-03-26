@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace RandomSolutions
 {
@@ -192,9 +193,9 @@ namespace RandomSolutions
                 return null;
 
             var result = _insertRows(model, xml);
-
+              
             return Regex.Replace(result, _cmdPattern,
-                x => _getValue(model, x.Groups[1].Value)?.ToString(),
+                x => _escape(_getValue(model, x.Groups[1].Value)?.ToString()),
                 RegexOptions.IgnorePatternWhitespace);
         }
 
@@ -219,7 +220,7 @@ namespace RandomSolutions
                             {
                                 var cmd = _removeTags(xx.Groups[1].Value).Trim();
                                 return cmd.StartsWith(itemsPath)
-                                    ? _getValue(item, cmd.Substring(Math.Min(itemsPath.Length + 1, cmd.Length)))?.ToString()
+                                    ? _escape(_getValue(item, cmd.Substring(Math.Min(itemsPath.Length + 1, cmd.Length)))?.ToString())
                                     : xx.Value;
                             },
                             RegexOptions.IgnorePatternWhitespace));
@@ -270,6 +271,14 @@ namespace RandomSolutions
             }
 
             return value;
+        }
+
+        static string _escape(string unescaped)
+        {
+            var doc = new XmlDocument();
+            var node = doc.CreateElement("root");
+            node.InnerText = unescaped;
+            return node.InnerXml;
         }
 
         static string _removeTags(string str)
