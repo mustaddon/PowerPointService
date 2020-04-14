@@ -73,6 +73,8 @@ namespace ConsoleApp
                         Evaluation = 1000000,
                     },
                     Items = Enumerable.Range(1, 5).Select(x => $"item#{x}"),
+                    LinkName = "TestLink",
+                    PackageName = typeof(PowerPointService).FullName,
                 };
             });
 

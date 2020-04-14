@@ -176,7 +176,7 @@ namespace RandomSolutions
                 {
                     var newSlidePart = doc.PresentationPart.AddNewPart<SlidePart>();
                     newSlidePart.Slide = new Slide(_insertValues(model, slide.Slide.OuterXml));
-                    _copyPartsAndRelationships(slide, newSlidePart);
+                    _copyPartsAndRelationships(slide, newSlidePart, model);
                     prevSlideId = slist.InsertAfter(new SlideId() { Id = nextId++, RelationshipId = doc.PresentationPart.GetIdOfPart(newSlidePart) }, prevSlideId);
                 }
 
@@ -227,6 +227,26 @@ namespace RandomSolutions
 
                 return result.ToString();
             });
+        }
+
+        Uri _insertValues(object model, Uri uri)
+        {
+            if (model == null || uri == null)
+                return uri;
+
+            try
+            {
+                var source = Uri.UnescapeDataString(uri.OriginalString);
+                var result = Regex.Replace(source, _cmdPattern,
+                    x => _getValue(model, x.Groups[1].Value)?.ToString(),
+                    RegexOptions.IgnorePatternWhitespace);
+
+                return new Uri(Uri.EscapeUriString(result), UriKind.RelativeOrAbsolute);
+            }
+            catch
+            {
+                return uri;
+            }
         }
 
         static string _getRowSourcePath(object obj, string cmd)
@@ -300,13 +320,13 @@ namespace RandomSolutions
             return null;
         }
 
-        static void _copyPartsAndRelationships(SlidePart source, SlidePart target)
+        void _copyPartsAndRelationships(SlidePart source, SlidePart target, object model)
         {
             source.Parts?.Where(x => x.OpenXmlPart.GetType() != typeof(NotesSlidePart)).ToList()
                 .ForEach(x => target.AddPart(x.OpenXmlPart, x.RelationshipId));
 
             source.HyperlinkRelationships?.ToList()
-                .ForEach(x => target.AddHyperlinkRelationship(x.Uri, x.IsExternal, x.Id));
+                .ForEach(x => target.AddHyperlinkRelationship(_insertValues(model, x.Uri), x.IsExternal, x.Id));
 
             source.ExternalRelationships?.ToList()
                 .ForEach(x => target.AddExternalRelationship(x.RelationshipType, x.Uri, x.Id));
