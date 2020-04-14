@@ -100,6 +100,28 @@ namespace RandomSolutions
             }
         }
 
+        public virtual int SlideIndex(byte[] presentation, Regex regex)
+        {
+            using (var stream = new MemoryStream())
+            {
+                stream.Write(presentation, 0, presentation.Length);
+
+                using (var doc = PresentationDocument.Open(stream, true))
+                {
+                    var slist = doc.PresentationPart.Presentation.SlideIdList;
+                    var slideIds = slist.ChildElements.Cast<SlideId>().ToArray();
+
+                    for (var i = 0; i < slideIds.Length; i++)
+                    {
+                        var slideId = slideIds[i];
+                        var slide = (SlidePart)doc.PresentationPart.GetPartById(slideId.RelationshipId);
+                        if (regex.IsMatch(slide.Slide.OuterXml))
+                            return i;
+                    }
+                }
+            }
+            return -1;
+        }
 
         static void _mergeSlides(PresentationDocument source, PresentationDocument target, Func<int, int, int, int?> map)
         {
