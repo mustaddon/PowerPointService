@@ -215,7 +215,7 @@ namespace RandomSolutions
                 return null;
 
             var result = _insertRows(model, xml);
-              
+
             return Regex.Replace(result, _cmdPattern,
                 x => _escape(_getValue(model, x.Groups[1].Value)?.ToString()),
                 RegexOptions.IgnorePatternWhitespace);
@@ -319,7 +319,7 @@ namespace RandomSolutions
         {
             var doc = new XmlDocument();
             var node = doc.CreateElement("root");
-            node.InnerText = unescaped;
+            node.InnerText = Regex.Replace(unescaped ?? string.Empty, @"[\v]", "");
             return node.InnerXml;
         }
 
