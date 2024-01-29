@@ -1,23 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net45;net6.0;net7.0;net8.0</TargetFrameworks>
     <AssemblyName>RandomSolutions.PowerPointService</AssemblyName>
     <RootNamespace>RandomSolutions</RootNamespace>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\PowerPointService.snk</AssemblyOriginatorKeyFile>
 
-    <AssemblyVersion>1.0.7</AssemblyVersion>
-    <FileVersion>1.0.7</FileVersion>
-    <Version>1.0.7</Version>
+    <AssemblyVersion>1.1.0</AssemblyVersion>
+    <FileVersion>1.1.0</FileVersion>
+    <Version>1.1.0</Version>
     
     <Company></Company>
     <Authors>Leonid Salavatov</Authors>
-    <Copyright>Leonid Salavatov 2020</Copyright>
+    <Copyright>Leonid Salavatov 2024</Copyright>
     <Product>RandomSolutions.PowerPointService</Product>
     <Title>RandomSolutions.PowerPointService</Title>
     <Description>PowerPoint presentation from template and model</Description>
-    <PackageTags>powerpoint pptx template model slide binding bind merge c# csharp</PackageTags>
+    <PackageTags>powerpoint pptx template model slide binding bind merge</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/mustaddon/PowerPointService</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mustaddon/PowerPointService</RepositoryUrl>
@@ -29,7 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DocumentFormat.OpenXml" Version="2.9.1" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.0.1" />
     <PackageReference Include="RandomSolutions.PipeTransform" Version="1.0.3" />
   </ItemGroup>
 

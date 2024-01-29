@@ -18,7 +18,7 @@ var result = powerPointService.CreateFromTemplate(template, (i, len) => new {
 });
 ```
 
-![](/Test/Images/example01.png)
+![](https://raw.githubusercontent.com/mustaddon/PowerPointService/master/Test/Images/example01.png)
 
 ### Example #2 - Iterator for slides/rows
 
@@ -35,11 +35,11 @@ var result = powerPointService.CreateFromTemplate(template, (i, len) =>
 );
 ```
 
-![](/Test/Images/example02.png)
+![](https://raw.githubusercontent.com/mustaddon/PowerPointService/master/Test/Images/example02.png)
 
 Presentations: 
-[template.pptx](Test/Presentations/template_source.pptx?raw=true) ,
-[result.pptx](Test/Presentations/template_result.pptx?raw=true)
+[template.pptx](https://raw.githubusercontent.com/mustaddon/PowerPointService/master/Test/Presentations/template_source.pptx?raw=true) ,
+[result.pptx](https://raw.githubusercontent.com/mustaddon/PowerPointService/master/Test/Presentations/template_result.pptx?raw=true)
 
-[More examples in the test console application...](Test/ConsoleApp/Program.cs)
+[Program.cs](https://raw.githubusercontent.com/mustaddon/PowerPointService/master/Test/ConsoleApp/Program.cs)
 

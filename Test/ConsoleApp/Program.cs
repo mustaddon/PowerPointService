@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using RandomSolutions;
 
 namespace ConsoleApp
@@ -13,6 +14,7 @@ namespace ConsoleApp
 
         static void Main(string[] args)
         {
+            _testSlideIndex();
             _testMergeSlides();
             _testInsertSlides();
             _testDeleteSlides();
@@ -20,6 +22,13 @@ namespace ConsoleApp
         }
 
         static string _presentationsDir(string file) => Path.Combine(@"..\..\..\..\presentations\", file);
+
+        static void _testSlideIndex()
+        {
+            var template = File.ReadAllBytes(_presentationsDir("template_source.pptx"));
+            var result = _powerPointService.SlideIndex(template, new Regex(@"CompanyName"));
+            Console.WriteLine(result);
+        }
 
         static void _testMergeSlides()
         {
