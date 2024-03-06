@@ -3,13 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerPointService", "PowerPointService\PowerPointService.csproj", "{61C3A5A6-0454-422C-8439-EAF94FACAE71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerPointTool", "PowerPointTool\PowerPointTool.csproj", "{61C3A5A6-0454-422C-8439-EAF94FACAE71}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "Test\ConsoleApp\ConsoleApp.csproj", "{B6B582D9-C611-4621-AB63-0336045F5EC9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{66079A69-D5BE-4D6D-AB4C-6A14805F4B72}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		LICENSE = LICENSE
 		pack.ps1 = pack.ps1
 		README.md = README.md
 	EndProjectSection

@@ -1,12 +1,12 @@
-# PowerPointService [![NuGet version](https://badge.fury.io/nu/RandomSolutions.PowerPointService.svg)](http://badge.fury.io/nu/RandomSolutions.PowerPointService)
+# PowerPointTool [![NuGet version](https://badge.fury.io/nu/PowerPointTool.svg)](http://badge.fury.io/nu/PowerPointTool)
 PowerPoint presentation from template and model
 
 ### Example #1 - Create from template
 
 ```C#
-var powerPointService = new RandomSolutions.PowerPointService();
+var ppTool = new PPTool();
 var template = File.ReadAllBytes(@".\template.pptx");
-var result = powerPointService.CreateFromTemplate(template, (i, len) => new {
+var result = ppTool.CreateFromTemplate(template, ctx => new {
   Title = "Example",
   Created = DateTimeOffset.Now,
   User = new { 
@@ -23,7 +23,7 @@ var result = powerPointService.CreateFromTemplate(template, (i, len) => new {
 ### Example #2 - Iterator for slides/rows
 
 ```C#
-var result = powerPointService.CreateFromTemplate(template, (i, len) => 
+var result = ppTool.CreateFromTemplate(template, ctx => 
   Enumerable.Range(1, 3).Select(x => new {
     CompanyName = $"Company #{x}",
     Employees = Enumerable.Range(1, _rnd.Next(4, 12)).Select(xx => new {

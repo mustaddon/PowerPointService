@@ -1,21 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45;net6.0;net7.0;net8.0</TargetFrameworks>
-    <AssemblyName>RandomSolutions.PowerPointService</AssemblyName>
-    <RootNamespace>RandomSolutions</RootNamespace>
+	<LangVersion>latest</LangVersion>
+    <TargetFrameworks>netstandard2.0;net6.0;net7.0;net8.0</TargetFrameworks>
+    <AssemblyName>PowerPointTool</AssemblyName>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\PowerPointService.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\PowerPointTool.snk</AssemblyOriginatorKeyFile>
 
-    <AssemblyVersion>1.1.0</AssemblyVersion>
-    <FileVersion>1.1.0</FileVersion>
-    <Version>1.1.0</Version>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <Version>1.0.0</Version>
     
     <Company></Company>
     <Authors>Leonid Salavatov</Authors>
     <Copyright>Leonid Salavatov 2024</Copyright>
-    <Product>RandomSolutions.PowerPointService</Product>
-    <Title>RandomSolutions.PowerPointService</Title>
+    <Product>PowerPointTool</Product>
+    <Title>PowerPointTool</Title>
     <Description>PowerPoint presentation from template and model</Description>
     <PackageTags>powerpoint pptx template model slide binding bind merge</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <PackageReference Include="DocumentFormat.OpenXml" Version="3.0.1" />
-    <PackageReference Include="RandomSolutions.PipeTransform" Version="1.0.3" />
+	<PackageReference Include="RandomSolutions.PipeTransform" Version="1.0.3" />
   </ItemGroup>
 
 </Project>
