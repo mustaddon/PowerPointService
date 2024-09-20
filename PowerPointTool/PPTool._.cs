@@ -23,12 +23,12 @@ public partial class PPTool(IEnumerable<IPipeTransform> pipes = null)
             return typeof(IPipeTransform).Assembly.GetTypes()
                 .Where(x => !x.IsAbstract
                     && typeof(IPipeTransform).IsAssignableFrom(x)
-                    && x.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, new Type[0], null) != null)
+                    && x.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, Array.Empty<Type>(), null) != null)
                 .Select(x => Activator.CreateInstance(x) as IPipeTransform);
         }
         catch { }
 
-        return new IPipeTransform[0];
+        return Array.Empty<IPipeTransform>();
     }
 
     internal static uint GetMaxSlideId(SlideIdList slideIdList)

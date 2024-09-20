@@ -38,7 +38,7 @@ namespace ConsoleApp
                         {
                             Name = $"Employee #{xx}",
                             Email = $"emp{xx}@company{x}.test",
-                            Birthday = new DateTime(_rnd.Next(1980, 2000), _rnd.Next(1, 12), 1).AddDays(_rnd.Next(0, 30)),
+                            Birthday = new DateOnly(_rnd.Next(1980, 2000), _rnd.Next(1, 12), 1).AddDays(_rnd.Next(0, 30)),
                         }),
                     });
 

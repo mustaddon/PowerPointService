@@ -62,9 +62,9 @@ public partial class PPTool
             NoChangeAspect = true,
         });
         picture.NonVisualPictureProperties.Append(nonVisualPictureDrawingProperties);
-        picture.NonVisualPictureProperties.Append(new DocumentFormat.OpenXml.Presentation.ApplicationNonVisualDrawingProperties());
+        picture.NonVisualPictureProperties.Append(new ApplicationNonVisualDrawingProperties());
 
-        var blipFill = new DocumentFormat.OpenXml.Presentation.BlipFill();
+        var blipFill = new BlipFill();
         var blip1 = new DocumentFormat.OpenXml.Drawing.Blip()
         {
             Embed = slidePart.GetIdOfPart(imagePart)
@@ -88,7 +88,7 @@ public partial class PPTool
         blipFill.Append(stretch);
         picture.Append(blipFill);
 
-        picture.ShapeProperties = new DocumentFormat.OpenXml.Presentation.ShapeProperties();
+        picture.ShapeProperties = new ShapeProperties();
         picture.ShapeProperties.Transform2D = new DocumentFormat.OpenXml.Drawing.Transform2D();
         picture.ShapeProperties.Transform2D.Append(new DocumentFormat.OpenXml.Drawing.Offset
         {
