@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 
@@ -13,17 +14,30 @@ public interface ISlideContext
     string SlideXml { get; }
 }
 
-public interface ISlideUpdateContext : ISlideContext
+public interface ISlideUpdateModelContext : ISlideContext
 {
-    void ApplyModel(object model);
-    void AddImage(Stream stream, string type = "image/png", Rectangle? shape = null);
+    void AddImage(Stream stream, string type = "image/*", Rectangle? shape = null);
 }
+
+public interface ISlideUpdateContext : ISlideUpdateModelContext
+{
+    void ApplyModels<T>(IEnumerable<T> models, Action<ISlideUpdateModelContext, T> action = null);
+}
+
+
 
 public static class ISlideContextExtensions
 {
-    public static void AddImage(this ISlideUpdateContext ctx, byte[] image, string type = "image/png", Rectangle? shape = null)
+    public static void AddImage(this ISlideUpdateModelContext ctx, byte[] image, string type = "image/*", Rectangle? shape = null)
         => ctx.AddImage(new MemoryStream(image), type, shape);
 
     public static void RemoveSlide(this ISlideUpdateContext ctx)
-        => ctx.ApplyModel(Array.Empty<object>());
+        => ctx.ApplyModels(Array.Empty<object>());
+
+    public static void ApplyModel(this ISlideUpdateContext ctx, object model)
+        => ctx.ApplyModels(model as IEnumerable<object> ?? [model]);
+
+    public static void ApplyModels<T>(this ISlideUpdateContext ctx, IEnumerable<T> models, Action<ISlideUpdateModelContext> action = null)
+        => ctx.ApplyModels(models, action == null ? null : (a, b) => action(a));
+
 }

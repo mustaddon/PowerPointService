@@ -14,42 +14,37 @@ namespace PowerPointTool;
 
 public partial class PPTool
 {
-    public virtual void ApplySlideModels(Stream targetTemplate, Func<ISlideContext, object> slideModelFactory)
+    public virtual void ApplySlideModels(Stream targetTemplate, Func<ISlideUpdateModelContext, object> slideModelFactory)
     {
         using var doc = PresentationDocument.Open(targetTemplate, true);
-        _fillSlides(doc, slideModelFactory);
-    }
 
-    void _fillSlides(PresentationDocument doc, Func<ISlideContext, object> modelFactory)
-    {
         var slist = doc.PresentationPart.Presentation.SlideIdList;
         var slideIds = slist.ChildElements.Cast<SlideId>().ToArray();
-        var nextId = GetMaxSlideId(slist) + 1;
 
         for (var i = 0; i < slideIds.Length; i++)
         {
             var slideId = slideIds[i];
-            var slide = (SlidePart)doc.PresentationPart.GetPartById(slideId.RelationshipId);
-            var ctx = new SlideContext(doc.PresentationPart, slide, i, slideIds.Length);
-            var sm = modelFactory(ctx);
-
-            if (sm != null)
-                ApplyModel(sm, doc.PresentationPart, slideId, slide, ref nextId);
+            var ctx = new SlideUpdate(this, doc.PresentationPart, slideId, i, slideIds.Length);
+            var model = slideModelFactory(ctx);
+            if (model != null)
+                ctx.ApplyModels(model as IEnumerable<object> ?? [model]);
         }
     }
 
-    internal void ApplyModel(object slideModel, PresentationPart presentationPart, SlideId slideId, SlidePart slidePart, ref uint nextId)
+    internal void ApplyModels<T>(PresentationPart presentationPart, SlideId slideId, SlidePart slidePart, IEnumerable<T> slideModels, Action<T, int, SlideId> action = null)
     {
-        var models = slideModel as IEnumerable<object> ?? [slideModel];
         var prevSlideId = slideId;
         var slist = presentationPart.Presentation.SlideIdList;
+        var nextId = GetMaxSlideId(slist) + 1;
+        var i = 0;
 
-        foreach (var m in models)
+        foreach (var m in slideModels)
         {
             var newSlidePart = presentationPart.AddNewPart<SlidePart>();
             newSlidePart.Slide = new Slide(InsertValues(m, slidePart.Slide.OuterXml));
             CopyPartsAndRelationships(slidePart, newSlidePart, m);
-            prevSlideId = slist.InsertAfter(new SlideId() { Id = nextId++, RelationshipId = presentationPart.GetIdOfPart(newSlidePart) }, prevSlideId);
+            prevSlideId = slist.InsertAfter(new SlideId { Id = nextId++, RelationshipId = presentationPart.GetIdOfPart(newSlidePart) }, prevSlideId);
+            action?.Invoke(m, i++, prevSlideId);
         }
 
         slist.RemoveChild(slideId);

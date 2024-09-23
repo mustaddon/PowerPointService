@@ -6,10 +6,10 @@ namespace PowerPointTool;
 
 public static partial class PPToolExtensions
 {
-    public static void CreateFromTemplate(this PPTool pps, Stream targetOutput, Stream sourceTemplate, Func<ISlideContext, object> slideModelFactory)
+    public static void CreateFromTemplate(this PPTool pps, Stream targetOutput, Stream sourceTemplate, Func<ISlideUpdateModelContext, object> slideModelFactory)
         => pps.CreateFromTemplateAsync(targetOutput, sourceTemplate, slideModelFactory).Wait();
 
-    public static byte[] CreateFromTemplate(this PPTool pps, byte[] templatePresentation, Func<ISlideContext, object> slideModelFactory)
+    public static byte[] CreateFromTemplate(this PPTool pps, byte[] templatePresentation, Func<ISlideUpdateModelContext, object> slideModelFactory)
     {
         using var ms = new MemoryStream();
         ms.Write(templatePresentation, 0, templatePresentation.Length);
