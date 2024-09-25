@@ -19,6 +19,13 @@ internal class SlideUpdate(
     public void ApplyModels<T>(IEnumerable<T> models, Action<ISlideContext, T, int> action = null)
     {
         _service.ApplyModels(_presentationPart, _slideId, _slidePart, models, action == null ? null
-            : (x, i, slideId) => action(new SlideUpdate(_service, _presentationPart, slideId, SlideIndex + i, SlidesCount + i), x, i));
+            : (x, i, slideId) => action(
+                new SlideContext(
+                    _service, 
+                    _presentationPart, 
+                    (SlidePart)_presentationPart.GetPartById(slideId.RelationshipId), 
+                    SlideIndex + i, 
+                    SlidesCount + i), 
+                x, i));
     }
 }

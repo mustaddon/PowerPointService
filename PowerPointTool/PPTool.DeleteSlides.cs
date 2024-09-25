@@ -28,7 +28,6 @@ public partial class PPTool
 
             slist.RemoveChild(slideId);
             CleanCustomShow(doc.PresentationPart.Presentation.CustomShowList, slideId.RelationshipId);
-            doc.PresentationPart.Presentation.Save();
             doc.PresentationPart.DeletePart(slide);
         }
     }

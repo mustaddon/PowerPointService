@@ -49,7 +49,6 @@ public partial class PPTool
 
         slist.RemoveChild(slideId);
         CleanCustomShow(presentationPart.Presentation.CustomShowList, slideId.RelationshipId);
-        presentationPart.Presentation.Save();
         presentationPart.DeletePart(slidePart);
     }
 
@@ -60,9 +59,8 @@ public partial class PPTool
 
         var result = _insertRows(model, xml);
 
-        return Regex.Replace(result, _cmdPattern,
-            x => _escape(_getValue(model, x.Groups[1].Value)?.ToString()),
-            RegexOptions.IgnorePatternWhitespace);
+        return _reCmd.Replace(result,
+            x => _escape(_getValue(model, x.Groups[1].Value)?.ToString()));
     }
 
     Uri _insertValues(object model, Uri uri)
@@ -73,9 +71,8 @@ public partial class PPTool
         try
         {
             var source = Uri.UnescapeDataString(uri.OriginalString);
-            var result = Regex.Replace(source, _cmdPattern,
-                x => _getValue(model, x.Groups[1].Value)?.ToString(),
-                RegexOptions.IgnorePatternWhitespace);
+            var result = _reCmd.Replace(source,
+                x => _getValue(model, x.Groups[1].Value)?.ToString());
 
             return new Uri(Uri.EscapeDataString(result), UriKind.RelativeOrAbsolute);
         }
@@ -85,11 +82,12 @@ public partial class PPTool
         }
     }
 
+
     string _insertRows(object model, string xml)
     {
-        return Regex.Replace(xml, @"<a:tr.+?</a:tr>", x =>
+        return _reInsert.Replace(xml, x =>
         {
-            var itemsPath = Regex.Matches(x.Value, _cmdPattern, RegexOptions.IgnorePatternWhitespace).Cast<Match>()
+            var itemsPath = _reCmd.Matches(x.Value).Cast<Match>()
                 .Select(xx => _getRowSourcePath(model, xx.Groups[1].Value))
                 .FirstOrDefault(xx => xx != null);
 
@@ -101,15 +99,14 @@ public partial class PPTool
 
             if (items != null)
                 foreach (var item in items)
-                    result.Append(Regex.Replace(x.Value, _cmdPattern,
+                    result.Append(_reCmd.Replace(x.Value,
                         xx =>
                         {
                             var cmd = _removeTags(xx.Groups[1].Value).Trim();
                             return cmd.StartsWith(itemsPath)
                                 ? _escape(_getValue(item, cmd.Substring(Math.Min(itemsPath.Length + 1, cmd.Length)))?.ToString())
                                 : xx.Value;
-                        },
-                        RegexOptions.IgnorePatternWhitespace));
+                        }));
 
             return result.ToString();
         });
@@ -175,7 +172,7 @@ public partial class PPTool
 
             if (Pipes.Value.ContainsKey(pipe))
             {
-                var args = Regex.Matches(parts[i], @"'([^']*?)'").Cast<Match>().Select(x => x.Groups[1].Value).ToArray();
+                var args = _rePipeArgs.Matches(parts[i]).Cast<Match>().Select(x => x.Groups[1].Value).ToArray();
                 value = Pipes.Value[pipe].Transform(value, args);
             }
         }
@@ -185,7 +182,7 @@ public partial class PPTool
 
     static string _removeTags(string str)
     {
-        return Regex.Replace(str, @"<[^<>]*?>", "");
+        return _reTags.Replace(str, string.Empty);
     }
 
     static object _getObjValue(object obj, string path)
@@ -212,9 +209,13 @@ public partial class PPTool
     {
         var doc = new XmlDocument();
         var node = doc.CreateElement("root");
-        node.InnerText = Regex.Replace(unescaped ?? string.Empty, @"[\v]", "");
+        node.InnerText = _reEscape.Replace(unescaped ?? string.Empty, string.Empty);
         return node.InnerXml;
     }
 
-    static readonly string _cmdPattern = @"{{(.*?)}}";
+    static readonly Regex _reEscape = new(@"[\v]");
+    static readonly Regex _reTags = new(@"<[^<>]*?>");
+    static readonly Regex _reInsert = new(@"<a:tr.+?</a:tr>");
+    static readonly Regex _reCmd = new(@"{{(.*?)}}", RegexOptions.IgnorePatternWhitespace);
+    static readonly Regex _rePipeArgs = new(@"'([^']*?)'");
 }

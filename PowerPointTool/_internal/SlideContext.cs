@@ -21,7 +21,5 @@ internal class SlideContext(PPTool pps, PresentationPart presentationPart, Slide
     {
         _service.AddImage(_slidePart, image, type,
             shape.HasValue && shape != Rectangle.Empty ? shape.Value : new Rectangle(0, 0, SlideWidth, SlideHeight));
-
-        _presentationPart.Presentation.Save();
     }
 }
