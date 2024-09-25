@@ -55,6 +55,7 @@ namespace ConsoleApp
                     Items = Enumerable.Range(1, 5).Select(x => $"item#{x}"),
                     LinkName = "TestLink",
                     PackageName = typeof(PPTool).FullName,
+                    Html = "<p>text <b>text</b> text</p>"
                 };
             });
 
@@ -101,15 +102,11 @@ namespace ConsoleApp
         {
             var template = File.ReadAllBytes(PresDir("template_source.pptx"));
             var jpg = File.ReadAllBytes(PresDir("img01.jpg"));
-            var png = File.ReadAllBytes(@"..\..\..\..\images\example01.png");
 
             var result = _ppt.UpdateSlides(template, ctx =>
             {
                 if (ctx.SlideIndex == 0)
-                {
-                    ctx.AddImage(jpg, shape: new(ctx.SlideWidth * 3 / 4, 0, ctx.SlideWidth / 4, ctx.SlideHeight / 2));
-                    ctx.AddImage(png, shape: new(0, 0, ctx.SlideWidth / 4, ctx.SlideHeight / 2));
-                }
+                    ctx.AddImage(jpg, new(0, 0, -ctx.SlideWidth / 4, ctx.SlideHeight / 2));
 
                 if (ctx.SlideIndex == ctx.SlidesCount - 1) // last slide
                     ctx.ApplyModels(Enumerable.Range(1, 3).Select(x => new
@@ -122,7 +119,7 @@ namespace ConsoleApp
                             Email = $"emp{xx}@company{x}.test",
                             Birthday = new DateTime(_rnd.Next(1980, 2000), _rnd.Next(1, 12), 1).AddDays(_rnd.Next(0, 30)),
                         }),
-                    }), s => s.AddImage(jpg, shape: new(ctx.SlideWidth * 7 / 8, 0, ctx.SlideWidth / 8, ctx.SlideHeight / 4)));
+                    }), s => s.AddImage(jpg, new(ctx.SlideWidth * 7 / 8, 0, ctx.SlideWidth / 8, ctx.SlideHeight / 4)));
                 else
                     ctx.ApplyModel(new
                     {
@@ -137,6 +134,7 @@ namespace ConsoleApp
                         Items = Enumerable.Range(1, 5).Select(x => $"item#{x}"),
                         LinkName = "TestLink",
                         PackageName = typeof(PPTool).FullName,
+                        Html = "<p>text <b>text</b> text</p>"
                     });
             });
 

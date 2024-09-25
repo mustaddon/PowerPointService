@@ -17,7 +17,7 @@ public partial class PPTool
         _mergeSlides(source, target, sourceToTargetMap);
     }
 
-    static void _mergeSlides(PresentationDocument source, PresentationDocument target, Func<ISlideContext, int?> map)
+    void _mergeSlides(PresentationDocument source, PresentationDocument target, Func<ISlideContext, int?> map)
     {
         if (target.PresentationPart.Presentation.SlideIdList == null)
             target.PresentationPart.Presentation.SlideIdList = new SlideIdList();
@@ -30,7 +30,7 @@ public partial class PPTool
         {
             var sourceSlideId = sourceSlideIds[i];
             var sourceSlide = (SlidePart)source.PresentationPart.GetPartById(sourceSlideId.RelationshipId);
-            var ctx = new SlideContext(source.PresentationPart, sourceSlide, i, sourceSlideIds.Length);
+            var ctx = new SlideContext(this, source.PresentationPart, sourceSlide, i, sourceSlideIds.Length);
             var insertAt = map(ctx);
 
             if (insertAt.HasValue)

@@ -21,7 +21,7 @@ public partial class PPTool
         {
             var slideId = slideIds[i];
             var slide = (SlidePart)doc.PresentationPart.GetPartById(slideId.RelationshipId);
-            var ctx = new SlideContext(doc.PresentationPart, slide, i, slideIds.Length);
+            var ctx = new SlideContext(this, doc.PresentationPart, slide, i, slideIds.Length);
 
             if (!slideSelector(ctx))
                 continue;

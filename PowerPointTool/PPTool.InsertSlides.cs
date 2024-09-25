@@ -18,7 +18,7 @@ public partial class PPTool
         _insertSlides(source, target, targetInsertIndex, sourceSlideSelector);
     }
 
-    static void _insertSlides(PresentationDocument source, PresentationDocument target, int targetInsertIndex, Func<ISlideContext, bool> sourceSlideSelector)
+    void _insertSlides(PresentationDocument source, PresentationDocument target, int targetInsertIndex, Func<ISlideContext, bool> sourceSlideSelector)
     {
         if (target.PresentationPart.Presentation.SlideIdList == null)
             target.PresentationPart.Presentation.SlideIdList = new SlideIdList();
@@ -33,7 +33,7 @@ public partial class PPTool
         {
             var sourceSlideId = sourceSlideIds[i];
             var sourceSlide = (SlidePart)source.PresentationPart.GetPartById(sourceSlideId.RelationshipId);
-            var ctx = new SlideContext(source.PresentationPart, sourceSlide, i, sourceSlideIds.Length);
+            var ctx = new SlideContext(this, source.PresentationPart, sourceSlide, i, sourceSlideIds.Length);
 
             if (sourceSlideSelector?.Invoke(ctx) != false)
                 _insertSlidePart(source, sourceSlide, target, slideMasterPartsMap, index++, nextId++);

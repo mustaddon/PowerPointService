@@ -1,5 +1,4 @@
 ﻿using DocumentFormat.OpenXml.Presentation;
-using RandomSolutions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,12 +22,12 @@ public partial class PPTool(IEnumerable<IPipeTransform> pipes = null)
             return typeof(IPipeTransform).Assembly.GetTypes()
                 .Where(x => !x.IsAbstract
                     && typeof(IPipeTransform).IsAssignableFrom(x)
-                    && x.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, Array.Empty<Type>(), null) != null)
+                    && x.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, [], null) != null)
                 .Select(x => Activator.CreateInstance(x) as IPipeTransform);
         }
         catch { }
 
-        return Array.Empty<IPipeTransform>();
+        return [];
     }
 
     internal static uint GetMaxSlideId(SlideIdList slideIdList)

@@ -14,7 +14,7 @@ namespace PowerPointTool;
 
 public partial class PPTool
 {
-    public virtual void ApplySlideModels(Stream targetTemplate, Func<ISlideUpdateModelContext, object> slideModelFactory)
+    public virtual void ApplySlideModels(Stream targetTemplate, Func<ISlideContext, object> slideModelFactory)
     {
         using var doc = PresentationDocument.Open(targetTemplate, true);
 
