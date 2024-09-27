@@ -10,14 +10,11 @@ namespace ConsoleApp;
 
 class Program
 {
-    class TT
-    {
-        public int this[int i] => i;
-    }
+    class TT { public string Prop1 { get; set; }  }
 
     static void Main(string[] args)
     {
-        TestCreateFromTemplate();
+        TestCreateFromTemplate(); 
         TestCreateFromTemplateStreams();
         TestUpdateSlides();
         TestMergeSlides();
@@ -131,6 +128,7 @@ class Program
         PackageName = "PowerPointTool",
         Html = "<p>text <b>text</b> text</p>",
         Dict = Enumerable.Range(0, 3).ToDictionary(i => "A"+i, i => i * 100),
+        Obj = new { Prop1 = new { Prop2 = new { Prop3 = "DeepValue" } } } as object,
         //Image = File.ReadAllBytes(PresDir("img01.jpg")),
     };
 
