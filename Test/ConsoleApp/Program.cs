@@ -3,12 +3,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
 namespace ConsoleApp;
 
 class Program
 {
+    class TT
+    {
+        public int this[int i] => i;
+    }
+
     static void Main(string[] args)
     {
         TestCreateFromTemplate();
@@ -118,12 +124,14 @@ class Program
         {
             Name = "TestName",
             IsActive = true,
-            Evaluation = 1000000,
+            Evaluation = 1000000.12345678,
         },
-        Items = Enumerable.Range(1, 5).Select(x => $"item#{x}"),
+        Items = Enumerable.Range(1, 3).Select(x => $"item#{x}").ToArray(),
         LinkName = "TestLink",
-        PackageName = typeof(PPTool).FullName,
-        Html = "<p>text <b>text</b> text</p>"
+        PackageName = "PowerPointTool",
+        Html = "<p>text <b>text</b> text</p>",
+        Dict = Enumerable.Range(0, 3).ToDictionary(i => "A"+i, i => i * 100),
+        //Image = File.ReadAllBytes(PresDir("img01.jpg")),
     };
 
     static readonly IEnumerable<object> _companySlideModels = Enumerable.Range(1, 3).Select(x => new

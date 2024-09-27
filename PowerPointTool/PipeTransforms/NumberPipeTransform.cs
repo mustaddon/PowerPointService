@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace PowerPointTool.PipeTransforms;
@@ -9,6 +8,8 @@ public class NumberPipeTransform() : BaseTransform<(string format, string thousa
 {
 
     public static string DefaultFormat = "1.0-3";
+
+    internal bool IntegerMode = false;
 
     protected override (string format, string thousandSeparator, string decimalSeparator) ParseArgs(string[] args)
     {
@@ -20,12 +21,22 @@ public class NumberPipeTransform() : BaseTransform<(string format, string thousa
         var thousandSeparator = match.Groups[1].Value;
         var decimalSeparator = match.Groups[3].Value;
         var minIntegerDigits = int.Parse(match.Groups[2].Value);
-        var minFractionDigits = int.Parse(match.Groups[4].Value);
-        var maxFractionDigits = int.Parse(match.Groups[5].Value);
+        string format;
+        
+        if (IntegerMode)
+        {
+            format = string.Format("#,#{0}", new string('0', minIntegerDigits));
+        }
+        else
+        {
+            var minFractionDigits = int.Parse(match.Groups[4].Value);
+            var maxFractionDigits = int.Parse(match.Groups[5].Value);
 
-        var format = string.Format("#,#{0}.{1}",
-            string.Join("", Enumerable.Range(1, minIntegerDigits).Select(x => "0")),
-            string.Join("", Enumerable.Range(1, maxFractionDigits).Select(x => x > minFractionDigits ? "#" : "0")));
+            format = string.Format("#,#{0}.{1}{2}",
+                new string('0', minIntegerDigits),
+                new string('0', minFractionDigits),
+                new string('#', Math.Max(0, maxFractionDigits - minFractionDigits)));
+        }
 
         return (format, thousandSeparator, decimalSeparator);
     }
@@ -35,10 +46,11 @@ public class NumberPipeTransform() : BaseTransform<(string format, string thousa
         if (obj == null) return null;
         var value = Convert.ToDouble(obj, _cultureInfo);
         var str = value.ToString(args.format, _cultureInfo);
-        return Regex.Replace(str, @"\.|,", x => x.Value == "." ? args.decimalSeparator : args.thousandSeparator);
+        return _reResult.Replace(str, x => x.Value == "." ? args.decimalSeparator : args.thousandSeparator);
     }
 
 
+    static readonly Regex _reResult = new(@"\.|,");
     static readonly Regex _reFormatPattern = new(@"^([\D]*?)([\d]+?)(\.|,)([\d]+?)-([\d]+?)$");
     static readonly CultureInfo _cultureInfo = CultureInfo.CreateSpecificCulture("en-US");
 }

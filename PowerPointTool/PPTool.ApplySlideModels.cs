@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -94,7 +93,7 @@ public partial class PPTool
             if (itemsPath == null)
                 return x.Value;
 
-            var items = _getObjValue(model, itemsPath) as System.Collections.IEnumerable;
+            var items = model.GetValue(itemsPath) as System.Collections.IEnumerable;
             var result = new StringBuilder();
 
             if (items != null)
@@ -164,7 +163,7 @@ public partial class PPTool
     object _getValue(object obj, string cmd)
     {
         var parts = _removeTags(cmd).Split('|');
-        var value = _getObjValue(obj, parts.First());
+        var value = obj.GetValue(parts.First());
 
         for (var i = 1; i < parts.Length; i++)
         {
@@ -183,20 +182,6 @@ public partial class PPTool
     static string _removeTags(string str)
     {
         return _reTags.Replace(str, string.Empty);
-    }
-
-    static object _getObjValue(object obj, string path)
-    {
-        try
-        {
-            var param = Expression.Parameter(obj.GetType(), string.Empty);
-            var prop = path.Trim().Split('.').Aggregate<string, Expression>(param, (r, x) => Expression.PropertyOrField(r, x));
-            var getter = Expression.Lambda(prop, param);
-            return getter.Compile().DynamicInvoke(obj);
-        }
-        catch { }
-
-        return null;
     }
 
 
