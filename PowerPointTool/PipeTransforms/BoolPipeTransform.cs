@@ -22,9 +22,15 @@ public class BoolPipeTransform() : BaseTransform<(string trueVal, string falseVa
         if (obj == null)
             return args.nullVal;
 
-        if (Convert.ToBoolean(obj))
-            return args.trueVal;
+        if (obj is bool @bool)
+            return @bool ? args.trueVal : args.falseVal;
 
-        return args.falseVal;
+        if (obj is string str)
+            return !string.IsNullOrWhiteSpace(str) ? args.trueVal : args.falseVal;
+
+        if (obj.ToString() == "0")
+            return args.falseVal;
+
+        return args.trueVal;
     }
 }
