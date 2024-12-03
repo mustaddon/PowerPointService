@@ -17,9 +17,10 @@ internal class SlideContext(PPTool pps, PresentationPart presentationPart, Slide
     public int SlideHeight => _presentationPart.Presentation.SlideSize.Cy ?? 0;
 
 
-    public void AddImage(Stream image, string type, Rectangle? shape)
+    public void AddImage(Stream image, string type, Rectangle? shape, bool fit)
     {
         _service.AddImage(_slidePart, image, type,
-            shape.HasValue && shape != Rectangle.Empty ? shape.Value : new Rectangle(0, 0, SlideWidth, SlideHeight));
+            shape.HasValue && shape != Rectangle.Empty ? shape.Value : new Rectangle(0, 0, SlideWidth, SlideHeight), 
+            fit);
     }
 }

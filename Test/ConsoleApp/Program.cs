@@ -1,6 +1,7 @@
 ﻿using PowerPointTool;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -61,13 +62,13 @@ class Program
         {
             if (ctx.SlideIndex == 0)
             {
-                ctx.AddImage(jpg, new(0, 0, -ctx.SlideWidth / 4, ctx.SlideHeight / 2));
-                ctx.AddImage(jpg, new(ctx.SlideWidth * 3 / 4, 0, ctx.SlideWidth / 4, ctx.SlideHeight / 2));
+                ctx.AddImage(jpg, new Rectangle(0, 0, -ctx.SlideWidth / 4, ctx.SlideHeight / 2));
+                ctx.AddImage(jpg, new Rectangle(ctx.SlideWidth * 3 / 4, 0, ctx.SlideWidth / 4, ctx.SlideHeight / 2));
             }
 
             if (ctx.SlideIndex == ctx.SlidesCount - 1) // last slide
                 ctx.ApplyModels(_companySlideModels,
-                    s => s.AddImage(jpg, new(ctx.SlideWidth * 7 / 8, 0, ctx.SlideWidth / 8, ctx.SlideHeight / 4)));
+                    s => s.AddImage(jpg, new Rectangle(ctx.SlideWidth * 7 / 8, 0, ctx.SlideWidth / 8, ctx.SlideHeight / 4)));
             else
                 ctx.ApplyModel(_defaultSlideModel);
         });

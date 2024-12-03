@@ -13,7 +13,7 @@ public interface ISlideContext
     int SlideIndex { get; }
     string SlideXml { get; }
 
-    void AddImage(Stream stream, string type = "image/*", Rectangle? shape = null);
+    void AddImage(Stream stream, string type = "image/*", Rectangle? shape = null, bool fit = true);
 }
 
 public interface ISlideUpdateContext : ISlideContext
@@ -25,14 +25,14 @@ public interface ISlideUpdateContext : ISlideContext
 
 public static class ISlideContextExtensions
 {
-    public static void AddImage(this ISlideContext ctx, byte[] image, string type = "image/*", Rectangle? shape = null)
-        => ctx.AddImage(new MemoryStream(image), type, shape);
+    public static void AddImage(this ISlideContext ctx, byte[] image, string type = "image/*", Rectangle? shape = null, bool fit = true)
+        => ctx.AddImage(new MemoryStream(image), type, shape, fit);
 
-    public static void AddImage(this ISlideContext ctx, Stream stream, Rectangle shape)
-        => ctx.AddImage(stream, shape: shape);
+    public static void AddImage(this ISlideContext ctx, Stream stream, Rectangle shape, bool fit = true)
+        => ctx.AddImage(stream, null, shape, fit);
 
-    public static void AddImage(this ISlideContext ctx, byte[] image, Rectangle shape)
-        => ctx.AddImage(new MemoryStream(image), shape: shape);
+    public static void AddImage(this ISlideContext ctx, byte[] image, Rectangle shape, bool fit = true)
+        => ctx.AddImage(new MemoryStream(image), null, shape, fit);
 
 
     public static void RemoveSlide(this ISlideUpdateContext ctx)
