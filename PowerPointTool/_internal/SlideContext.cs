@@ -15,6 +15,7 @@ internal class SlideContext(PPTool pps, PresentationPart presentationPart, Slide
     public string SlideXml => _slidePart.Slide.OuterXml;
     public int SlideWidth => _presentationPart.Presentation.SlideSize.Cx ?? 0;
     public int SlideHeight => _presentationPart.Presentation.SlideSize.Cy ?? 0;
+    public bool SlideHidden => _slidePart.Slide.Show == "0";
 
 
     public void AddImage(Stream image, string type, Rectangle? shape, bool fit)

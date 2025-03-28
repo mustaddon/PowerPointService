@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace PowerPointTool.PipeTransforms;
 
@@ -11,9 +12,9 @@ public class BoolPipeTransform() : BaseTransform<(string trueVal, string falseVa
     protected override (string trueVal, string falseVal, string nullVal) ParseArgs(string[] args)
     {
         return (
-            args.Length > 0 ? args[0] : DefaultTrueValue,
-            args.Length > 1 ? args[1] : DefaultFalseValue,
-            args.Length > 2 ? args[2] : DefaultNullValue
+            args.Length > 0 ? Regex.Unescape(args[0] ?? string.Empty) : DefaultTrueValue,
+            args.Length > 1 ? Regex.Unescape(args[1] ?? string.Empty) : DefaultFalseValue,
+            args.Length > 2 ? Regex.Unescape(args[2] ?? string.Empty) : DefaultNullValue
         );
     }
 

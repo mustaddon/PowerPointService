@@ -12,6 +12,7 @@ public interface ISlideContext
     int SlideHeight { get; }
     int SlideIndex { get; }
     string SlideXml { get; }
+    bool SlideHidden { get; }
 
     void AddImage(Stream stream, string type = "image/*", Rectangle? shape = null, bool fit = true);
 }

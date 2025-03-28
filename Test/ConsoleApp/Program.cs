@@ -4,18 +4,17 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
 namespace ConsoleApp;
 
 class Program
 {
-    class TT { public string Prop1 { get; set; }  }
+    class TT { public string Prop1 { get; set; } }
 
     static void Main(string[] args)
     {
-        TestCreateFromTemplate(); 
+        TestCreateFromTemplate();
         TestCreateFromTemplateStreams();
         TestUpdateSlides();
         TestMergeSlides();
@@ -60,6 +59,12 @@ class Program
 
         var result = _ppt.UpdateSlides(template, ctx =>
         {
+            if (ctx.SlideHidden)
+            {
+                ctx.RemoveSlide();
+                return;
+            }
+
             if (ctx.SlideIndex == 0)
             {
                 ctx.AddImage(jpg, new Rectangle(0, 0, -ctx.SlideWidth / 4, ctx.SlideHeight / 2));
@@ -128,7 +133,7 @@ class Program
         LinkName = "TestLink",
         PackageName = "PowerPointTool",
         Html = "<p>text <b>text</b> text</p>",
-        Dict = Enumerable.Range(0, 3).ToDictionary(i => "A"+i, i => i * 100),
+        Dict = Enumerable.Range(0, 3).ToDictionary(i => "A" + i, i => i * 100),
         Obj = new { Prop1 = new { Prop2 = new { Prop3 = "DeepValue" } } } as object,
         //Image = File.ReadAllBytes(PresDir("img01.jpg")),
     };
